@@ -9,32 +9,57 @@ function createTestData(count: number): number[] {
   return result;
 }
 
+let testData = createTestData(10);
+
 /**
+ * 第一种
  * 遍历数组，数组项的值为 x，新数组[x]++，统计每个值出现的次数
- * 当数组的值比较集中时，新数组会有较大浪费
+ * 可能当数组的值比较集中时，新数组会有较大浪费
  *
  * @param {number[]} nums
  * @returns {number}
  */
-
-function findRepeatNumber(nums: number[]): number {
-  console.log('nums', nums);
-  let result: number[] = [];
+function solution_1(nums: number[]): boolean {
+  let result: boolean[] = [];
   for (let i = 0; i < nums.length; i++) {
     if (result[nums[i]]) {
-      result[nums[i]]++;
+      return true;
     } else {
-      result[nums[i]] = 1;
+      result[nums[i]] = true;
     }
   }
 
-  for (let i = 0; i < result.length; i++) {
-    if (result[i] && result[i] > 1) {
-      return result[i];
-    }
-  }
-
-  return -1;
+  return false;
 }
 
-console.log('result', findRepeatNumber(createTestData(99)));
+/**
+ * 数组的下标范围是 0~n-1，所有数字的范围也在 0~n-1，如果没有重复那么 nums[i] == i
+ * 所以拿 nums[i] 和 i 比较
+ * 如果相等，比较下一项
+ * 如果不相等，再比较 nums[i] 和 nums[nums[i]]
+ *  如果不相等，nums[i] 和 nums[nums[i]] 交换，使 nums[nums[i]] == nums[i]。把 nums[i] 记作 m，机 nums[m] = m
+ *  如果相等，说明重复了
+ *
+ * @param {number[]} nums
+ * @returns {boolean}
+ */
+function solution_2(nums: number[]): boolean {
+  for (let i = 0; i < nums.length; i++) {
+    if (nums[i] != i) {
+      let m: number = nums[i];
+      if (nums[i] == nums[m]) {
+        return true;
+      } else {
+        [nums[i], nums[m]] = [nums[m], nums[i]];
+        // 交换过一次之后，nums[i] 也不一定等于 i，还要再进行一轮比较，所以自减
+        i--;
+      }
+    }
+  }
+
+  return false;
+}
+
+console.log('testData', testData);
+console.log('solution_1', solution_1(testData));
+console.log('solution_2', solution_2(testData));
